@@ -23,7 +23,7 @@ function formatTimestamp(timestamp) {
     const timestampedTextList = [];
   
     // Iterate over lines skipping the first line (date)
-    for (let i = 1; i < lines.length; i++) {
+    for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();
       const [timestamp, ...textArray] = line.split(' ');
       const text = textArray.join(' '); // Reconstruct text if it contains spaces
