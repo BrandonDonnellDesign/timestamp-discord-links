@@ -3,7 +3,7 @@ import React from 'react';
 
 const GeneratedLinks = ({ links }) => {
   return (
-    <div className='w-full bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'>
+    <div className='w-full bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 overflow-auto'>
       <h2 className='text-black font-bold'>Generated Links:</h2>
       <ul>
         {links.map((link, index) => (

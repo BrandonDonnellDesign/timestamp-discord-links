@@ -48,11 +48,10 @@ const InputForm = ({ onSubmit }) => {
   };
 
   return (
-    <div className='w-full'>
       <form
         className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4  text-black'
         onSubmit={handleSubmit}>
-        <div className='mb-4 w-96 overflow-hidden'>
+        <div className='mb-4 overflow-hidden'>
           <label>
             Select Video:
             <select
@@ -88,7 +87,6 @@ const InputForm = ({ onSubmit }) => {
           </button>
         </div>
       </form>
-    </div>
   );
 };
 

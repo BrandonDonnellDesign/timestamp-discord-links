@@ -13,6 +13,10 @@ function formatTimestamp(timestamp) {
   function createTwitchLink(baseUrl, timestamp, text) {
     const timestampFormatted = formatTimestamp(timestamp);
     const videoId = baseUrl.split('/').pop(); // Extract the video ID from the base URL
+
+    // Remove hyphen if it exists
+    text = text.trim().startsWith('-') ? text.trim().substring(1).trim() : text.trim();
+    
     const twitchUrl = `https://www.twitch.tv/videos/${videoId}?t=${timestampFormatted}`;
     return { timestamp, text, url: twitchUrl };
   }
