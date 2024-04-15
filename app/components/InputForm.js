@@ -28,16 +28,6 @@ const InputForm = ({ onSubmit }) => {
     }
   };
 
-  const handleInputChange = (index, event) => {
-    const { name, value } = event.target;
-    const list = [...inputList];
-    list[index][name] = value;
-    setInputList(list);
-  };
-
-  const handleAddEntry = () => {
-    setInputList([...inputList, { timestamp: '', text: '' }]);
-  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -85,6 +75,7 @@ const InputForm = ({ onSubmit }) => {
             className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button'>
             Generate Links
           </button>
+          
         </div>
       </form>
   );

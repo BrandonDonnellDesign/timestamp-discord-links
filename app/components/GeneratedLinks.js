@@ -7,7 +7,7 @@ const GeneratedLinks = ({ links }) => {
       <h2 className='text-black font-bold'>Generated Links:</h2>
       <ul>
         {links.map((link, index) => (
-          <li key={index} class="list-none text-gray-700">
+          <li key={index} className="list-none text-gray-700">
             {link.timestamp} - [{link.text}]({link.url})
           </li>
         ))}
