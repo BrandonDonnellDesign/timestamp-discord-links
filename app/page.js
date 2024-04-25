@@ -25,11 +25,11 @@ export default function Home() {
           </a>
         </div>
       </div>
-      <div className='gap-5 w-2/5'>
+      <div className='gap-5 w-2/5 min-w-[700px]'>
         <InputForm onSubmit={handleFormSubmit} />
         
       </div>
-      <div className='grid gap-5 w-2/5 min-h-96'>
+      <div className='grid gap-5 w-2/5 min-h-96 min-w-[700px]'>
       <GeneratedLinks links={generatedLinks} />
         
       </div>
