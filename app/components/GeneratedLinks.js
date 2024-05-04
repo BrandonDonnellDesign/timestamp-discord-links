@@ -1,6 +1,6 @@
 import React from 'react';
 
-const GeneratedLinks = ({ links, baseUrl }) => {
+const GeneratedLinks = ({ links}) => {
   let textareas = [];
   let currentText = '';
 
