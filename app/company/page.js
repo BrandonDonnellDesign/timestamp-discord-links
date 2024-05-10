@@ -1,14 +1,19 @@
 'use client'
 import React, { useEffect, useState } from 'react';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON);
 
 function TwitchVideos() {
+  const [videos, setVideos] = useState([]);
+
   useEffect(() => {
     async function fetchVideos(userId, clientId) {
       const response = await fetch(
-        `https://api.twitch.tv/helix/videos?user_id=${userId}&first=10`,
+        `https://api.twitch.tv/helix/videos?user_id=${userId}&first=5`,
         {
           headers: {
-            'Client-ID': process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID,
+            'Client-ID': clientId,
             Authorization: process.env.NEXT_PUBLIC_TWITCH_AUTH_TOKEN,
           },
         }
@@ -18,32 +23,35 @@ function TwitchVideos() {
     }
 
     async function displayVideos() {
-      const streamers = [
-        { name: 'Streamer1', userId: '44574567' },
-        { name: 'Streamer2', userId: '52959392' },
-        // Add more streamers as needed
-      ];
+      try {
+        // Fetch streamer data from Supabase
+        const { data: streamers, error } = await supabase.from('Company').select('twitchId');
+        
+        if (error) {
+          throw error;
+        }
 
-      const allVideos = [];
-      const clientId = process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID;
+        const allVideos = [];
+        const clientId = process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID;
 
-      for (const streamer of streamers) {
-        const videos = await fetchVideos(streamer.userId, clientId);
-        allVideos.push(...videos);
+        for (const streamer of streamers) {
+          const videos = await fetchVideos(streamer.twitchId, clientId);
+          allVideos.push(...videos);
+        }
+
+        // Sort videos by date in descending order
+        allVideos.sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        );
+
+        setVideos(allVideos);
+      } catch (error) {
+        console.error('Error fetching streamer data:', error);
       }
-
-      // Sort videos by date in descending order
-      allVideos.sort(
-        (a, b) => new Date(b.created_at) - new Date(a.created_at)
-      );
-
-      setVideos(allVideos);
     }
 
     displayVideos();
   }, []);
-
-  const [videos, setVideos] = useState([]);
 
   return (
     <div className='rounded-lg bg-zinc-800 p-10 container-xl'>
@@ -62,12 +70,12 @@ function TwitchVideos() {
               </h5>
               <div className='grid grid-cols-2 gap-2'>
                 <div>
-                  <p className=' text-base text-black'>
+                  <p className='text-base text-black'>
                     {new Date(video.created_at).toLocaleDateString()}
                   </p>
                 </div>
                 <div>
-                  <p className=' text-base text-black'>
+                  <p className='text-base text-black'>
                     {video.view_count} views
                   </p>
                 </div>
