@@ -65,17 +65,17 @@ function TwitchVideos() {
               width={355}
             />
             <div className='p-6'>
-              <h5 className='mb-2 text-xl font-medium text-black'>
+              <p className='text-clip overflow-hidden mb-6 text-l font-bold text-black h-24 max-h-24 line-clamp-3'>
                 {video.title}
-              </h5>
+              </p>
               <div className='grid grid-cols-2 gap-2'>
                 <div>
-                  <p className='text-base text-black'>
+                  <p className='text-black font-medium'>
                     {new Date(video.created_at).toLocaleDateString()}
                   </p>
                 </div>
                 <div>
-                  <p className='text-base text-black'>
+                  <p className='text-black font-medium'>
                     {video.view_count} views
                   </p>
                 </div>
