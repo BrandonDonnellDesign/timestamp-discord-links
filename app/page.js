@@ -1,18 +1,16 @@
-'use client'; // This is a client component
-import React, { useState } from 'react';
-import InputForm from './components/InputForm';
-import GeneratedLinks from './components/GeneratedLinks';
-import { generateMaskedLinks } from './utils/linkGeneration';
+import Jumbotron from './components/Jumbotron';
+import VideoGallery from './components/VideoGallery';
 
 export default function Home() {
-  const [generatedLinks, setGeneratedLinks] = useState([]);
-
-  const handleFormSubmit = async (baseUrl, inputList) => {
-    const links = await generateMaskedLinks(baseUrl, inputList);
-    setGeneratedLinks(links);
-  };
-
   return (
+<<<<<<< HEAD
+    <div>
+      {/* Jumbotron */}
+      <Jumbotron />
+      {/* Jumbotron */}
+      <VideoGallery />
+    </div>
+=======
     <main className='flex min-h-screen flex-col items-center justify-between p-12'>
       <div className='z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex'>
         <div className='fixed bottom-0 left-0 flex h-24 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none'>
@@ -25,11 +23,11 @@ export default function Home() {
           </a>
         </div>
       </div>
-      <div className='gap-5 w-2/5 min-w-[700px]'>
+      <div className='gap-5 w-2/5'>
         <InputForm onSubmit={handleFormSubmit} />
         
       </div>
-      <div className='grid gap-5 w-2/5 min-h-96 min-w-[700px]'>
+      <div className='grid gap-5 w-2/5 min-h-96'>
       <GeneratedLinks links={generatedLinks} />
         
       </div>
@@ -99,5 +97,6 @@ export default function Home() {
         </a>
       </div>
     </main>
+>>>>>>> parent of e76b6f7 (Cleaned up layout and added seperation after 2000 characters)
   );
 }

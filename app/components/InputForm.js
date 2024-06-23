@@ -1,8 +1,8 @@
-// components/InputForm.js
+'use client';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const InputForm = ({ onSubmit }) => {
+function InputForm({ onSubmit }) {
   const [videos, setVideos] = useState([]);
   const [selectedVideo, setSelectedVideo] = useState('');
   const [inputList, setInputList] = useState([{ timestamp: '', text: '' }]);
@@ -10,12 +10,13 @@ const InputForm = ({ onSubmit }) => {
   useEffect(() => {
     fetchVideos();
   }, []);
+
   const fetchVideos = async () => {
     try {
       const response = await axios.get('https://api.twitch.tv/helix/videos', {
         headers: {
           'Client-ID': process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID,
-          'Authorization': process.env.NEXT_PUBLIC_TWITCH_AUTH_TOKEN,
+          Authorization: process.env.NEXT_PUBLIC_TWITCH_AUTH_TOKEN,
         },
         params: {
           user_id: '44574567',
@@ -28,7 +29,6 @@ const InputForm = ({ onSubmit }) => {
     }
   };
 
-
   const handleSubmit = (event) => {
     event.preventDefault();
     const selectedVideoData = videos.find(
@@ -38,8 +38,12 @@ const InputForm = ({ onSubmit }) => {
   };
 
   return (
+    <div>
+      <h1 className='mb-8 mt-0 text-2xl font-bold text-white'>
+        Link Generator
+      </h1>
       <form
-        className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4  text-black'
+        className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4  text-black w-full'
         onSubmit={handleSubmit}>
         <div className='mb-4 overflow-hidden'>
           <label>
@@ -65,20 +69,16 @@ const InputForm = ({ onSubmit }) => {
           <textarea
             className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline h-96'
             id='list'
-            type='text'
-            onChange={(e) => setInputList(e.target.value)}
+            onChange={(e) => setInputList(e.target.value)} // Changed to update state correctly
           />
         </div>
-        <div className='flex items-center justify-between'>
-          <button
-            type='submit'
-            className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button'>
-            Generate Links
-          </button>
-          
-        </div>
+        <button
+          type='submit'
+          className=' bg-violet-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'>
+          Generate Links
+        </button>
       </form>
+    </div>
   );
-};
-
+}
 export default InputForm;
