@@ -25,6 +25,14 @@ function createTwitchLink(baseUrl, timestamp, text) {
 
 // Function to generate masked links from the list of timestamped texts
 export async function generateMaskedLinks(baseUrl, inputList) {
+  // Check if inputList is a string
+  if (typeof inputList !== 'string') {
+    return [];
+  }
+  // Trim whitespace and check if the string is empty
+  if (!inputList.trim()) {
+    return [];
+  }
   const lines = inputList.trim().split('\n');
   const timestampedTextList = [];
 
