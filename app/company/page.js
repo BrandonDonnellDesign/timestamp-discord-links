@@ -54,7 +54,7 @@ function TwitchVideos() {
   }, []);
 
   return (
-    <div className='rounded-lg bg-zinc-800 p-10 container-xl'>
+    <div>
       <h1 className='text-3xl pb-10'>The Company</h1>
       <div className='grid grid-cols-4 gap-4'>
         {videos.map((video) => (
