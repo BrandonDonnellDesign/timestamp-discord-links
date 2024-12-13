@@ -1,10 +1,10 @@
 import './globals.css';
-import Navbar from './components/NavBar'
+import Navbar from './components/NavBar';
 import Footer from './components/Footer';
 
 export const metadata = {
-  title: "Timestamp to Discord Link",
-  description: "Convert Timestamp list to discord masked links.",
+  title: 'Timestamp to Discord Link',
+  description: 'Convert Timestamp list to discord masked links.',
 };
 
 export default function RootLayout({ children }) {
@@ -14,7 +14,9 @@ export default function RootLayout({ children }) {
         <div className='max-w-screen max-h-screen bg-black text-white flex flex-col'>
           <Navbar />
           <div className='container mx-auto flex-grow flex-auto'>
-            {children}
+            <div className='rounded-lg bg-zinc-800 p-10 container-xl'>
+              {children}
+            </div>
           </div>
           <Footer />
         </div>

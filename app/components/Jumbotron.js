@@ -1,4 +1,6 @@
 import React from 'react';
+import Image from 'next/image'
+import twitchLogo from '../images/twitch-tile.png';
 
 const Jumbotron = () => {
   return (
@@ -19,8 +21,8 @@ const Jumbotron = () => {
             </a>
           </div>
           <div className='mb-12 lg:mb-0'>
-            <img
-              src='https://www.vectorlogo.zone/logos/twitch/twitch-tile.svg'
+            <Image
+              src={twitchLogo}
               className='w-full scale-50'
               alt=''
             />
