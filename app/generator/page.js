@@ -13,7 +13,7 @@ export default function Generator() {
   };
 
   return (
-    <div className='rounded-lg bg-zinc-800 p-10 container-2xl'>
+    <div>
       <InputForm onSubmit={handleFormSubmit} />
       <GeneratedLinks links={generatedLinks} />
     </div>
