@@ -1,31 +1,59 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { fetchFromTwitch } from '../utils/twitchAuth';
 
 function InputForm({ onSubmit }) {
   const [videos, setVideos] = useState([]);
   const [selectedVideo, setSelectedVideo] = useState('');
   const [inputList, setInputList] = useState([{ timestamp: '', text: '' }]);
+  const [loading, setLoading] = useState(false);
+  const [streamerInput, setStreamerInput] = useState('');
+  const [error, setError] = useState('');
 
-  useEffect(() => {
-    fetchVideos();
-  }, []);
-
-  const fetchVideos = async () => {
+  const fetchVideos = async (username) => {
+    setLoading(true);
+    setError('');
     try {
-      const response = await axios.get('https://api.twitch.tv/helix/videos', {
-        headers: {
-          'Client-ID': process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID,
-          Authorization: process.env.NEXT_PUBLIC_TWITCH_AUTH_TOKEN,
-        },
-        params: {
-          user_id: '44574567',
-          first: 50, // Number of videos to fetch
-        },
+      // First, get the user ID from the username
+      const userResponse = await fetchFromTwitch('users', {
+        login: username
       });
-      setVideos(response.data.data);
+
+      if (!userResponse.data || userResponse.data.length === 0) {
+        setError('Streamer not found. Please check the username and try again.');
+        setVideos([]);
+        return;
+      }
+
+      const userId = userResponse.data[0].id;
+
+      // Then fetch the videos for that user
+      const videosResponse = await fetchFromTwitch('videos', {
+        user_id: userId,
+        first: 50,
+      });
+
+      if (!videosResponse.data || videosResponse.data.length === 0) {
+        setError('No videos found for this streamer.');
+        setVideos([]);
+        return;
+      }
+
+      setVideos(videosResponse.data);
+      setError('');
     } catch (error) {
       console.error('Error fetching videos:', error);
+      setError('Failed to fetch videos. Please try again.');
+      setVideos([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleStreamerSubmit = (e) => {
+    e.preventDefault();
+    if (streamerInput.trim()) {
+      fetchVideos(streamerInput.trim());
     }
   };
 
@@ -38,47 +66,86 @@ function InputForm({ onSubmit }) {
   };
 
   return (
-    <div>
-      <h1 className='mb-8 mt-0 text-2xl font-bold text-white'>
+    <div className="max-w-4xl mx-auto">
+      <h1 className="text-3xl font-bold mb-8 bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
         Link Generator
       </h1>
-      <form
-        className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4  text-black w-full'
-        onSubmit={handleSubmit}>
-        <div className='mb-4 overflow-hidden'>
-          <label>
-            Select Video:
-            <select
-              value={selectedVideo}
-              onChange={(event) => setSelectedVideo(event.target.value)}>
-              <option value=''>Select a Video</option>
-              {videos.map((video) => (
-                <option key={video.id} value={video.id}>{`${
-                  video.title
-                } - ${new Date(
-                  video.created_at
-                ).toLocaleDateString()}`}</option>
-              ))}
-            </select>
+      <div className="bg-zinc-900 shadow-xl rounded-xl p-8 space-y-6">
+        {/* Streamer Input Section */}
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-zinc-300">
+            Enter Streamer Username
           </label>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={streamerInput}
+              onChange={(e) => setStreamerInput(e.target.value)}
+              placeholder="Enter Twitch username..."
+              className="flex-1 p-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white focus:ring-2 focus:ring-violet-600 focus:border-transparent transition-all duration-200"
+            />
+            <button
+              onClick={handleStreamerSubmit}
+              disabled={loading || !streamerInput.trim()}
+              className="px-6 py-3 bg-violet-600 text-white font-medium rounded-lg hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:ring-offset-2 focus:ring-offset-zinc-900 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <div className="w-5 h-5 border-t-2 border-b-2 border-white rounded-full animate-spin"></div>
+              ) : (
+                'Load Videos'
+              )}
+            </button>
+          </div>
+          {error && (
+            <p className="text-red-400 text-sm mt-2">{error}</p>
+          )}
         </div>
-        <div className='mb-6'>
-          <label className='block text-gray-700 text-sm font-bold mb-2'>
-            Paste the list of timestamps and text:
-          </label>
-          <textarea
-            className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline h-96'
-            id='list'
-            onChange={(e) => setInputList(e.target.value)} // Changed to update state correctly
-          />
-        </div>
-        <button
-          type='submit'
-          className=' bg-violet-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'>
-          Generate Links
-        </button>
-      </form>
+
+        <form onSubmit={handleSubmit}>
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-zinc-300">
+                Select Video
+              </label>
+              <select
+                value={selectedVideo}
+                onChange={(event) => setSelectedVideo(event.target.value)}
+                className="w-full p-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white focus:ring-2 focus:ring-violet-600 focus:border-transparent transition-all duration-200"
+              >
+                <option value=''>Choose a video...</option>
+                {videos && videos.length > 0 && videos.map((video) => (
+                  <option 
+                    key={video.id} 
+                    value={video.id}
+                    className="py-2"
+                  >
+                    {`${video.title} - ${new Date(video.created_at).toLocaleDateString()}`}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-zinc-300">
+                Timestamps and Text
+              </label>
+              <textarea
+                className="w-full h-96 p-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white focus:ring-2 focus:ring-violet-600 focus:border-transparent transition-all duration-200 resize-none"
+                placeholder="Paste your timestamps and text here..."
+                onChange={(e) => setInputList(e.target.value)}
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full py-3 px-4 bg-violet-600 text-white font-medium rounded-lg hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:ring-offset-2 focus:ring-offset-zinc-900 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={!selectedVideo}
+            >
+              Generate Links
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
+
 export default InputForm;
