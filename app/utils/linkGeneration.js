@@ -1,49 +1,73 @@
-// Function to format timestamp to "hh'h'mm'm'ss's'" format
-function formatTimestamp(timestamp) {
-  const timeComponents = timestamp.split(':');
-  const hours = parseInt(timeComponents[0]);
-  const minutes = parseInt(timeComponents[1]);
-  const seconds = parseInt(timeComponents[2]);
-  return `${hours.toString().padStart(2, '0')}h${minutes
-    .toString()
-    .padStart(2, '0')}m${seconds.toString().padStart(2, '0')}s`;
+// Function to format timestamp to display format (HH:MM:SS)
+function formatDisplayTimestamp(timestamp) {
+  const parts = timestamp.split(':');
+  let hours = 0;
+  let minutes = 0;
+  let seconds = 0;
+
+  if (parts.length === 3) {
+    hours = parseInt(parts[0]);
+    minutes = parseInt(parts[1]);
+    seconds = parseInt(parts[2]);
+  } else if (parts.length === 2) {
+    minutes = parseInt(parts[0]);
+    seconds = parseInt(parts[1]);
+  }
+
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+// Function to format timestamp for Twitch URL
+function formatUrlTimestamp(timestamp) {
+  const parts = timestamp.split(':');
+  let hours = 0;
+  let minutes = 0;
+  let seconds = 0;
+
+  if (parts.length === 3) {
+    hours = parseInt(parts[0]);
+    minutes = parseInt(parts[1]);
+    seconds = parseInt(parts[2]);
+  } else if (parts.length === 2) {
+    minutes = parseInt(parts[0]);
+    seconds = parseInt(parts[1]);
+  }
+
+  return `${hours.toString().padStart(2, '0')}h${minutes.toString().padStart(2, '0')}m${seconds.toString().padStart(2, '0')}s`;
 }
 
 // Function to create a Twitch link
 function createTwitchLink(baseUrl, timestamp, text) {
-  const timestampFormatted = formatTimestamp(timestamp);
-  const videoId = baseUrl.split('/').pop(); // Extract the video ID from the base URL
+  const displayTimestamp = formatDisplayTimestamp(timestamp);
+  const urlTimestamp = formatUrlTimestamp(timestamp);
+  
+    // Remove leading "- " or unnecessary spaces in text
+    const cleanedText = text.replace(/^-\s*/, '').trim();
 
-  // Remove hyphen if it exists
-  text = text.trim().startsWith('-')
-    ? text.trim().substring(1).trim()
-    : text.trim();
-
-  const twitchUrl = `https://www.twitch.tv/videos/${videoId}?t=${timestampFormatted}`;
-  return { timestamp, text, url: twitchUrl };
+    return `${displayTimestamp} - [${cleanedText}](${baseUrl}?t=${urlTimestamp})`;
 }
 
 // Function to generate masked links from the list of timestamped texts
 export async function generateMaskedLinks(baseUrl, inputList) {
-  // Check if inputList is a string
-  if (typeof inputList !== 'string') {
+  // Check if inputList is an array of objects with timestamp and text
+  if (!Array.isArray(inputList)) {
+    console.error('Input must be an array');
     return [];
   }
-  // Trim whitespace and check if the string is empty
-  if (!inputList.trim()) {
+
+  // Validate the input format
+  if (!inputList.every(item => item.timestamp && item.text)) {
+    console.error('Each input item must have timestamp and text');
     return [];
   }
-  const lines = inputList.trim().split('\n');
-  const timestampedTextList = [];
 
-  for (const line of lines) {
-    const [timestamp, ...textArray] = line.trim().split(' ');
-    const text = textArray.join(' ');
-    timestampedTextList.push({ timestamp, text });
+  try {
+    const links = inputList.map(({ timestamp, text }) =>
+      createTwitchLink(baseUrl, timestamp, text)
+    );
+    return links;
+  } catch (error) {
+    console.error('Error generating links:', error);
+    return [];
   }
-
-  const links = timestampedTextList.map(({ timestamp, text }) =>
-    createTwitchLink(baseUrl, timestamp, text)
-  );
-  return links;
 }

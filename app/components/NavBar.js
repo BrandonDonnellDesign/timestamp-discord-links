@@ -2,9 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuth, signInWithTwitch, signOut } from '../utils/auth';
 
 export default function Navbar() {
   const pathname = usePathname();
+  const { user, loading } = useAuth();
 
   const isActive = (path) => pathname === path;
 
@@ -13,6 +15,10 @@ export default function Navbar() {
     { name: 'Link Generator', href: '/generator' },
     { name: 'Hades VODs', href: '/hades' },
   ];
+
+  if (user) {
+    navLinks.push({ name: 'Dashboard', href: '/dashboard' });
+  }
 
   return (
     <nav className="bg-zinc-900/50 backdrop-blur-lg border-b border-zinc-800 sticky top-0 z-50">
@@ -46,6 +52,28 @@ export default function Navbar() {
                 {link.name}
               </Link>
             ))}
+            {!loading && (
+              user ? (
+                <div className="flex items-center ml-4 space-x-4">
+                  <span className="text-sm text-zinc-400">
+                    {user.user_metadata.preferred_username}
+                  </span>
+                  <button
+                    onClick={signOut}
+                    className="px-3 py-2 rounded-lg text-sm font-medium text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all duration-200"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={signInWithTwitch}
+                  className="ml-4 px-4 py-2 bg-violet-600 text-white text-sm font-medium rounded-lg hover:bg-violet-700 transition-all duration-200"
+                >
+                  Sign In
+                </button>
+              )
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -89,6 +117,28 @@ export default function Navbar() {
               {link.name}
             </Link>
           ))}
+          {!loading && (
+            user ? (
+              <div className="px-3 py-2 space-y-2">
+                <span className="block text-sm text-zinc-400">
+                  {user.user_metadata.preferred_username}
+                </span>
+                <button
+                  onClick={signOut}
+                  className="block w-full px-3 py-2 rounded-lg text-sm font-medium text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all duration-200"
+                >
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={signInWithTwitch}
+                className="block w-full mt-2 px-4 py-2 bg-violet-600 text-white text-sm font-medium rounded-lg hover:bg-violet-700 transition-all duration-200"
+              >
+                Sign In
+              </button>
+            )
+          )}
         </div>
       </div>
     </nav>
