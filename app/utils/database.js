@@ -80,40 +80,57 @@ export const deleteUserLink = async (linkId, userId) => {
   }
 };
 
-export const updateUserLinks = async (linkId, userId, newTimestamps) => {
+export async function updateUserLinks(linkId, userId, timestamps) {
   try {
-    console.log('Attempting to update timestamps:', {
-      linkId,
-      userId,
-      timestampCount: newTimestamps.length
+    const response = await fetch(`/api/links/${linkId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId,
+        timestamps
+      })
     });
 
-    if (!linkId) throw new Error('Link ID is required');
-    if (!userId) throw new Error('User ID is required');
-    if (!Array.isArray(newTimestamps)) throw new Error('Timestamps must be an array');
-
-    const { data, error } = await supabase
-      .from('generated_links')
-      .update({
-        timestamps: newTimestamps
-      })
-      .match({ id: linkId, user_id: userId })
-      .select();
-
-    if (error) {
-      console.error('Supabase error updating timestamps:', error);
-      throw error;
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to update timestamps');
     }
 
-    console.log('Successfully updated timestamps:', data);
-    return data;
+    return await response.json();
   } catch (error) {
-    console.error('Detailed error updating timestamps:', {
-      error,
-      message: error.message,
-      details: error.details,
-      hint: error.hint
-    });
+    console.error('Update error:', error);
     throw error;
   }
-}; 
+}
+
+const handleSaveChanges = async (newTimestamps) => {
+  try {
+    setUpdateError('');
+    
+    if (!selectedLink || !selectedLink.id) {
+      throw new Error('No link selected');
+    }
+
+    console.log('Update request:', {
+      linkId: selectedLink.id,
+      userId: user.id,
+      timestamps: newTimestamps
+    });
+
+    const updatedLink = await updateUserLinks(selectedLink.id, user.id, newTimestamps);
+    console.log('Update response:', updatedLink);
+
+    setSavedLinks(prevLinks => prevLinks.map(link => 
+      link.id === selectedLink.id 
+        ? { ...link, timestamps: newTimestamps }
+        : link
+    ));
+
+    setIsModalOpen(false);
+  } catch (error) {
+    console.error('Dashboard error:', error);
+    setUpdateError(error.message);
+  }
+};

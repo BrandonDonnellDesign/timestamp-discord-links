@@ -1,8 +1,40 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import { useAuth } from '../utils/auth';
+
+import { useState, useEffect } from 'react';
+import { useAuth } from '../utils/auth'; // Corrected import path
 import { getUserLinks, deleteUserLink, updateUserLinks } from '../utils/database';
 import TimestampModal from '../components/TimestampModal';
+
+// Utility function to group timestamps into chunks of 2000 characters or less
+const groupTimestamps = (timestamps, maxLength, date, vodLink) => {
+  const groups = [];
+  let currentGroup = `Date: ${date} Timestamps\n`;
+
+  timestamps.forEach((timestamp) => {
+    if (currentGroup.length + timestamp.length + 1 > maxLength) {
+      groups.push(currentGroup);
+      currentGroup = timestamp;
+    } else {
+      currentGroup += (currentGroup ? '\n' : '') + timestamp;
+    }
+  });
+
+  if (currentGroup) {
+    currentGroup += `\n\nVOD: ${vodLink}`;
+    groups.push(currentGroup);
+  }
+
+  return groups;
+};
+
+// Utility function to handle copying text to clipboard
+const handleCopy = (text) => {
+  navigator.clipboard.writeText(text).then(() => {
+    alert('Copied to clipboard');
+  }).catch((err) => {
+    console.error('Failed to copy: ', err);
+  });
+};
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -21,7 +53,6 @@ export default function Dashboard() {
   const fetchSavedLinks = async () => {
     try {
       const links = await getUserLinks(user.id);
-      // Add formatted date to each link
       const linksWithDates = links.map(link => ({
         ...link,
         formattedDate: new Date(link.created_at).toLocaleDateString('en-US', {
@@ -55,29 +86,31 @@ export default function Dashboard() {
 
   const handleSaveChanges = async (newTimestamps) => {
     try {
-      console.log('Attempting to save changes:', {
+      setUpdateError('');
+      
+      if (!selectedLink || !selectedLink.id) {
+        throw new Error('No link selected');
+      }
+
+      console.log('Update request:', {
         linkId: selectedLink.id,
         userId: user.id,
-        timestampCount: newTimestamps.length
+        timestamps: newTimestamps
       });
 
       const updatedLink = await updateUserLinks(selectedLink.id, user.id, newTimestamps);
       console.log('Update response:', updatedLink);
 
-      // Update the local state with the new timestamps
-      setSavedLinks(savedLinks.map(link => 
+      setSavedLinks(prevLinks => prevLinks.map(link => 
         link.id === selectedLink.id 
           ? { ...link, timestamps: newTimestamps }
           : link
       ));
 
-      // Reset selectedLink to ensure the modal closes correctly
-      setSelectedLink(null);
-      setUpdateError('');
       setIsModalOpen(false);
     } catch (error) {
-      console.error('Error updating timestamps:', error);
-      setUpdateError('Failed to update timestamps. Please try again.');
+      console.error('Dashboard error:', error);
+      setUpdateError(error.message);
     }
   };
 
@@ -125,10 +158,7 @@ export default function Dashboard() {
         ) : (
           <div className="grid gap-6">
             {savedLinks.map((link) => (
-              <div
-                key={link.id}
-                className="bg-zinc-900 rounded-lg p-6 shadow-xl"
-              >
+              <div key={link.id} className="bg-zinc-900 rounded-lg p-6 shadow-xl">
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h2 className="text-xl font-semibold text-white mb-2">{link.video_title}</h2>
@@ -147,7 +177,7 @@ export default function Dashboard() {
                       onClick={() => handleEdit(link)}
                       className="px-3 py-1 bg-violet-600 text-white text-sm font-medium rounded-lg hover:bg-violet-700 transition-all duration-200"
                     >
-                      View & Edit
+                      View {/*& Edit */}
                     </button>
                     <button
                       onClick={() => handleDelete(link.id)}
@@ -158,16 +188,19 @@ export default function Dashboard() {
                   </div>
                 </div>
                 <div className="bg-zinc-800 rounded-lg p-4">
-                  <pre className="text-zinc-300 font-mono text-sm whitespace-pre-wrap overflow-x-auto max-h-32 overflow-y-auto">
-                    {link.timestamps.slice(0, 3).map((timestamp, index) => (
-                      <div key={index} className="mb-1">{timestamp}</div>
-                    ))}
-                    {link.timestamps.length > 3 && (
-                      <div className="text-zinc-500 mt-2">
-                        + {link.timestamps.length - 3} more timestamps...
-                      </div>
-                    )}
-                  </pre>
+                  {groupTimestamps(link.timestamps, 2000, link.formattedDate, link.video_url).map((group, index) => (
+                    <div key={index} className="mb-4">
+                      <pre className="text-zinc-300 font-mono text-sm whitespace-pre-wrap overflow-x-auto max-h-32 overflow-y-auto">
+                        {group}
+                      </pre>
+                      <button
+                        onClick={() => handleCopy(group)}
+                        className="mt-2 px-3 py-1 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-all duration-200"
+                      >
+                        Copy
+                      </button>
+                    </div>
+                  ))}
                 </div>
               </div>
             ))}
@@ -188,4 +221,4 @@ export default function Dashboard() {
       </div>
     </div>
   );
-} 
+}
