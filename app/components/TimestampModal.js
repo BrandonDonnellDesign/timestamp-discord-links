@@ -9,11 +9,7 @@ export default function TimestampModal({ isOpen, onClose, timestamps, videoData,
   useEffect(() => {
     if (isOpen && timestamps) {
       // Format the text with header and footer
-      const text = `${videoData?.date || 'Date'} Timestamps\n\n${timestamps
-        .map(timestamp => {
-          return timestamp.replace(/\s*-\s*\[-\s*/, ' - [');
-        })
-        .join('\n')}\n\nVOD: ${videoData?.url}`;
+      const text = `${videoData?.date || 'Date'} Timestamps\n\n${timestamps.join('\n')}\n\nVOD: ${videoData?.url}`;
       
       setEditedTimestamps(text);
       setError('');
@@ -28,24 +24,13 @@ export default function TimestampModal({ isOpen, onClose, timestamps, videoData,
       // Remove header and footer to get just the timestamps
       const timestampLines = lines.filter(line => {
         return !line.startsWith('VOD:') && 
-               !line.includes('Timestamps') &&
-               /^\d{2}:\d{2}:\d{2}\s+-\s+\[.*\]\(https:\/\/.*\)$/.test(line);
+               !line.includes('Timestamps');
       });
 
       console.log('Saving timestamps:', timestampLines);
       
       if (timestampLines.length === 0) {
         setError('Cannot save empty timestamps');
-        return;
-      }
-
-      // Validate timestamp format
-      const isValidFormat = timestampLines.every(timestamp => {
-        return /^\d{2}:\d{2}:\d{2}\s+-\s+\[.*\]\(https:\/\/.*\)$/.test(timestamp);
-      });
-
-      if (!isValidFormat) {
-        setError('Some timestamps are not in the correct format. Please check the format and try again.');
         return;
       }
 
@@ -141,4 +126,4 @@ export default function TimestampModal({ isOpen, onClose, timestamps, videoData,
       </div>
     </div>
   );
-} 
+}

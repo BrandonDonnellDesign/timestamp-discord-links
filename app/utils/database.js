@@ -82,23 +82,14 @@ export const deleteUserLink = async (linkId, userId) => {
 
 export async function updateUserLinks(linkId, userId, timestamps) {
   try {
-    const response = await fetch(`/api/links/${linkId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        userId,
-        timestamps
-      })
-    });
+    const { data, error } = await supabase
+      .from('generated_links')
+      .update({ timestamps })
+      .match({ id: linkId, user_id: userId })
+      .select();
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to update timestamps');
-    }
-
-    return await response.json();
+    if (error) throw error;
+    return data;
   } catch (error) {
     console.error('Update error:', error);
     throw error;

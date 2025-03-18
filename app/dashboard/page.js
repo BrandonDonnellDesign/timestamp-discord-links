@@ -8,14 +8,16 @@ import TimestampModal from '../components/TimestampModal';
 // Utility function to group timestamps into chunks of 2000 characters or less
 const groupTimestamps = (timestamps, maxLength, date, vodLink) => {
   const groups = [];
-  let currentGroup = `Date: ${date} Timestamps\n`;
+  let currentGroup = `Date: ${date} Timestamps\n\n`;
 
   timestamps.forEach((timestamp) => {
-    if (currentGroup.length + timestamp.length + 1 > maxLength) {
+    const newLinkText = `${timestamp}\n`;
+
+    if (currentGroup.length + newLinkText.length > maxLength) {
       groups.push(currentGroup);
-      currentGroup = timestamp;
+      currentGroup = newLinkText;
     } else {
-      currentGroup += (currentGroup ? '\n' : '') + timestamp;
+      currentGroup += newLinkText;
     }
   });
 
@@ -101,11 +103,13 @@ export default function Dashboard() {
       const updatedLink = await updateUserLinks(selectedLink.id, user.id, newTimestamps);
       console.log('Update response:', updatedLink);
 
-      setSavedLinks(prevLinks => prevLinks.map(link => 
-        link.id === selectedLink.id 
-          ? { ...link, timestamps: newTimestamps }
-          : link
-      ));
+      if (updatedLink) {
+        setSavedLinks(prevLinks => prevLinks.map(link => 
+          link.id === selectedLink.id 
+            ? { ...link, timestamps: newTimestamps }
+            : link
+        ));
+      }
 
       setIsModalOpen(false);
     } catch (error) {
@@ -177,7 +181,7 @@ export default function Dashboard() {
                       onClick={() => handleEdit(link)}
                       className="px-3 py-1 bg-violet-600 text-white text-sm font-medium rounded-lg hover:bg-violet-700 transition-all duration-200"
                     >
-                      View {/*& Edit */}
+                      View & Edit
                     </button>
                     <button
                       onClick={() => handleDelete(link.id)}
