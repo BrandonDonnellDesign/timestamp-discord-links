@@ -6,6 +6,9 @@ const VideoGallery = () => {
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Get the current hostname dynamically
+  const hostname = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
+
   useEffect(() => {
     const fetchVideos = async () => {
       try {
@@ -47,7 +50,7 @@ const VideoGallery = () => {
           >
             <div className="relative">
               <iframe
-                src={`https://player.twitch.tv/?video=${video.id}&parent=localhost&parent=theones.netlify.app&autoplay=false`}
+                src={`https://player.twitch.tv/?video=${video.id}&parent=${hostname}&autoplay=false`}
                 height={219}
                 width="100%"
                 className="w-full"

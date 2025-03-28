@@ -8,6 +8,9 @@ function TwitchVideos() {
   const [activeFilter, setActiveFilter] = useState('latest');
   const [filteredVideos, setFilteredVideos] = useState([]);
 
+  // Get the current hostname dynamically
+  const hostname = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
+
   useEffect(() => {
     async function fetchVideos(userId) {
       try {
@@ -148,7 +151,7 @@ function TwitchVideos() {
             >
               <div className="relative aspect-video">
                 <iframe
-                  src={`https://player.twitch.tv/?video=${video.id}&parent=localhost&parent=theones.netlify.app&autoplay=false`}
+                  src={`https://player.twitch.tv/?video=${video.id}&parent=${hostname}&autoplay=false`}
                   height="100%"
                   width="100%"
                   className="absolute inset-0"
