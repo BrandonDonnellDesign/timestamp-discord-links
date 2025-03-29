@@ -122,17 +122,18 @@ const Footer = () => {
                     Multistream
                   </a>
                 </li>
-                {/* <li>
+                <li>
                   <a
-                    href="https://www.youtube.com/lysium"
+                    href=""
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-sm text-zinc-400 hover:text-violet-400 transition-colors"
                   >
-                    YouTube
+                    VodSync (Coming Soon)
+                    
                   </a>
                 </li>
-                <li>
+                {/* <li>
                   <a
                     href="https://discord.gg/Lysium"
                     target="_blank"
