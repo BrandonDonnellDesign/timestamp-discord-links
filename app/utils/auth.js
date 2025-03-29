@@ -16,7 +16,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 // Utility to get the correct redirect URL
 const getRedirectURL = () => {
   const url =
-    process.env.NEXT_PUBLIC_SITE_URL || // Production site URL
+    'https://twitchlinker.netlify.app/'|| // Production site URL
     process.env.NEXT_PUBLIC_VERCEL_URL || // Automatically set by Vercel
     'http://localhost:3000'; // Default for local development
 
