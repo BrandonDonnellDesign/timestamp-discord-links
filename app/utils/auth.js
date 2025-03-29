@@ -12,10 +12,11 @@ export const signInWithTwitch = async () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'twitch',
       options: {
-        scopes: 'user:read:email'
-      }
+        scopes: 'user:read:email',
+        redirectTo: process.env.NEXT_PUBLIC_TWITCH_REDIRECT_URL, // Use the correct redirect URL
+      },
     });
-    
+
     if (error) throw error;
     return data;
   } catch (error) {
@@ -66,4 +67,4 @@ export const useAuth = () => {
   }, []);
 
   return { user, loading };
-}; 
+};
