@@ -9,11 +9,16 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export const signInWithTwitch = async () => {
   try {
+    const redirectTo =
+      typeof window !== 'undefined' && window.location.origin
+        ? `${window.location.origin}`
+        : 'http://localhost:3000'; // Fallback for server-side rendering
+
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'twitch',
       options: {
         scopes: 'user:read:email',
-        redirectTo: process.env.NEXT_PUBLIC_TWITCH_REDIRECT_URL, // Use the correct redirect URL
+        redirectTo, // Explicitly set the redirect URL
       },
     });
 
