@@ -14,15 +14,16 @@ if (!supabaseUrl || !supabaseAnonKey) {
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Utility to get the correct redirect URL
-const getRedirectURL = () => {
-  const url =
-    'https://twitchlinker.netlify.app/'|| // Production site URL
-    process.env.NEXT_PUBLIC_VERCEL_URL || // Automatically set by Vercel
-    'http://localhost:3000'; // Default for local development
-
-  // Ensure the URL starts with "http" and ends with a "/"
-  return url.startsWith('http') ? url.replace(/\/?$/, '/') : `https://${url}/`;
-};
+const getURL = () => {
+  let url =
+    process?.env?.NEXT_PUBLIC_SITE_URL ?? // Set this to your site URL in production env.
+    'http://localhost:3000/'
+  // Make sure to include `https://` when not localhost.
+  url = url.startsWith('http') ? url : `https://${url}`
+  // Make sure to include a trailing `/`.
+  url = url.endsWith('/') ? url : `${url}/`
+  return url
+}
 
 // Sign in with Twitch
 export const signInWithTwitch = async () => {
@@ -30,7 +31,7 @@ export const signInWithTwitch = async () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'twitch',
       options: {
-        redirectTo: getRedirectURL(),
+        redirectTo: getURL(),
         scopes: 'user:read:email',
       },
     });

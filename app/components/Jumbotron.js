@@ -41,7 +41,7 @@ const Jumbotron = () => {
                   </svg>
                 </Link>
                 <a 
-                  href="https://www.twitch.tv/lysium" 
+                  href="https://www.twitch.tv/Ray__C" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="inline-flex items-center px-6 py-3 text-base font-medium text-violet-200 bg-zinc-800/50 rounded-lg hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 focus:ring-offset-zinc-900 transition-all duration-200"

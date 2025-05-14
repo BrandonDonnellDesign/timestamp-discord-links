@@ -13,7 +13,7 @@ export default function Navbar() {
   const navLinks = [
     { name: 'Home', href: '/' },
     { name: 'Link Generator', href: '/generator' },
-    { name: 'Hades VODs', href: '/hades' },
+    { name: 'Exodus VODs', href: '/exodus' },
   ];
 
   if (user) {
