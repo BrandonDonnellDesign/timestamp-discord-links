@@ -62,7 +62,9 @@ export const getCurrentUser = async () => {
     if (error) throw error;
     return user;
   } catch (error) {
-    console.error('Error getting current user:', error.message);
+    if (error.message !== 'Auth session missing!') {
+      console.error('Error getting current user:', error.message);
+    }
     return null;
   }
 };

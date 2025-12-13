@@ -95,33 +95,3 @@ export async function updateUserLinks(linkId, userId, timestamps) {
     throw error;
   }
 }
-
-const handleSaveChanges = async (newTimestamps) => {
-  try {
-    setUpdateError('');
-    
-    if (!selectedLink || !selectedLink.id) {
-      throw new Error('No link selected');
-    }
-
-    console.log('Update request:', {
-      linkId: selectedLink.id,
-      userId: user.id,
-      timestamps: newTimestamps
-    });
-
-    const updatedLink = await updateUserLinks(selectedLink.id, user.id, newTimestamps);
-    console.log('Update response:', updatedLink);
-
-    setSavedLinks(prevLinks => prevLinks.map(link => 
-      link.id === selectedLink.id 
-        ? { ...link, timestamps: newTimestamps }
-        : link
-    ));
-
-    setIsModalOpen(false);
-  } catch (error) {
-    console.error('Dashboard error:', error);
-    setUpdateError(error.message);
-  }
-};

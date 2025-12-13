@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { fetchFromTwitch } from '../utils/twitchAuth';
+import { fetchFromTwitch } from '../actions';
 import { useAuth, signInWithTwitch } from '../utils/auth';
 import { saveGeneratedLinks } from '../utils/database';
 
@@ -121,8 +121,8 @@ function InputForm({ onSubmit }) {
       console.log('Attempting to save with generated links:', generatedLinks);
 
       if (!generatedLinks?.videoData || !generatedLinks?.links) {
-        console.error('Missing data:', { 
-          hasVideoData: !!generatedLinks?.videoData, 
+        console.error('Missing data:', {
+          hasVideoData: !!generatedLinks?.videoData,
           hasLinks: !!generatedLinks?.links,
           generatedLinks
         });
@@ -139,7 +139,7 @@ function InputForm({ onSubmit }) {
         generatedLinks.links
       );
       setSaveStatus({ loading: false, error: null, success: true });
-      
+
       // Reset form fields after saving
       setSelectedVideo('');
       setInputList([{ timestamp: '', text: '' }]);
@@ -154,10 +154,10 @@ function InputForm({ onSubmit }) {
       return () => clearTimeout(successTimeout);
     } catch (error) {
       console.error('Error saving links:', error);
-      setSaveStatus({ 
-        loading: false, 
-        error: error.message || 'Failed to save links. Please try again.', 
-        success: false 
+      setSaveStatus({
+        loading: false,
+        error: error.message || 'Failed to save links. Please try again.',
+        success: false
       });
     }
   };
@@ -211,8 +211,8 @@ function InputForm({ onSubmit }) {
               >
                 <option value=''>Choose a video...</option>
                 {videos && videos.length > 0 && videos.map((video) => (
-                  <option 
-                    key={video.id} 
+                  <option
+                    key={video.id}
                     value={video.id}
                     className="py-2"
                   >
@@ -267,7 +267,7 @@ function InputForm({ onSubmit }) {
                 </button>
               )}
             </div>
-            
+
             {/* Generated Links Display */}
             {generatedLinks && generatedLinks.links && (
               <div className="mt-6 p-4 bg-zinc-800 rounded-lg">
@@ -290,7 +290,7 @@ function InputForm({ onSubmit }) {
                 </div>
               </div>
             )}
-            
+
             {/* Status Messages */}
             {saveStatus.error && (
               <p className="mt-2 text-red-400 text-sm">

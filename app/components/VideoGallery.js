@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { fetchFromTwitch } from '../utils/twitchAuth';
+import { fetchFromTwitch } from '../actions';
 
 const VideoGallery = () => {
   const [videos, setVideos] = useState([]);
@@ -44,8 +44,8 @@ const VideoGallery = () => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {videos && videos.length > 0 && videos.map((video) => (
-          <div 
-            key={video.id} 
+          <div
+            key={video.id}
             className="bg-zinc-900 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]"
           >
             <div className="relative">
@@ -63,9 +63,9 @@ const VideoGallery = () => {
               <div className="flex justify-between items-center text-sm text-zinc-400">
                 <p>{new Date(video.created_at).toLocaleDateString()}</p>
                 <div className="flex items-center gap-1">
-                  <svg 
-                    className="w-4 h-4" 
-                    fill="currentColor" 
+                  <svg
+                    className="w-4 h-4"
+                    fill="currentColor"
                     viewBox="0 0 20 20"
                   >
                     <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />

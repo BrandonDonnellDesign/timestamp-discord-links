@@ -6,7 +6,6 @@ const Footer = () => {
     main: [
       { name: 'Home', href: '/' },
       { name: 'Link Generator', href: '/generator' },
-      { name: 'Hades VODs', href: '/hades' },
     ],
     social: [
       {
@@ -53,12 +52,12 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-zinc-900/50 border-t border-zinc-800">
+    <footer className="bg-zinc-950/50 border-t border-white/5 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           {/* Brand */}
           <div className="space-y-8 xl:col-span-1">
-            <Link 
+            <Link
               href="/"
               className="flex items-center space-x-3 text-white hover:text-violet-400 transition-colors"
             >
@@ -130,7 +129,7 @@ const Footer = () => {
                     className="text-sm text-zinc-400 hover:text-violet-400 transition-colors"
                   >
                     VodSync (Coming Soon)
-                    
+
                   </a>
                 </li>
                 {/* <li>
