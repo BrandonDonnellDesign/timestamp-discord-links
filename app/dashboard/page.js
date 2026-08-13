@@ -47,29 +47,27 @@ export default function Dashboard() {
   const [updateError, setUpdateError] = useState('');
 
   useEffect(() => {
-    if (user) {
-      fetchSavedLinks();
-    }
+    if (!user) return;
+    let active = true;
+    const fetchSavedLinks = async () => {
+      try {
+        const links = await getUserLinks(user.id);
+        const linksWithDates = links.map(link => ({
+          ...link,
+          formattedDate: new Date(link.created_at).toLocaleDateString('en-US', {
+            month: 'long', day: 'numeric', year: 'numeric'
+          })
+        }));
+        if (active) setSavedLinks(linksWithDates);
+      } catch (error) {
+        console.error('Error fetching saved links:', error);
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+    fetchSavedLinks();
+    return () => { active = false; };
   }, [user]);
-
-  const fetchSavedLinks = async () => {
-    try {
-      const links = await getUserLinks(user.id);
-      const linksWithDates = links.map(link => ({
-        ...link,
-        formattedDate: new Date(link.created_at).toLocaleDateString('en-US', {
-          month: 'long',
-          day: 'numeric',
-          year: 'numeric'
-        })
-      }));
-      setSavedLinks(linksWithDates);
-    } catch (error) {
-      console.error('Error fetching saved links:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleDelete = async (linkId) => {
     try {

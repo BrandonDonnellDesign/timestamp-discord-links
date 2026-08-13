@@ -1,17 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import { createBrowserClient } from '@supabase/ssr';
 
 // Initialize Supabase client
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabasePublishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+  || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Supabase URL or Anon Key is missing. Check your environment variables.');
+if (!supabaseUrl || !supabasePublishableKey) {
+  throw new Error('Supabase URL or publishable key is missing.');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createBrowserClient(supabaseUrl, supabasePublishableKey);
 
 // Utility to get the correct redirect URL
 const getURL = () => {
@@ -31,7 +32,7 @@ export const signInWithTwitch = async () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'twitch',
       options: {
-        redirectTo: getURL(),
+        redirectTo: `${getURL()}auth/callback`,
         scopes: 'user:read:email',
       },
     });

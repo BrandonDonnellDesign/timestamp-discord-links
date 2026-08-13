@@ -1,20 +1,16 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export default function TimestampModal({ isOpen, onClose, timestamps, videoData, onSave }) {
-  const [editedTimestamps, setEditedTimestamps] = useState('');
+  if (!isOpen) return null;
+  return <TimestampModalContent onClose={onClose} timestamps={timestamps} videoData={videoData} onSave={onSave} />;
+}
+
+function TimestampModalContent({ onClose, timestamps, videoData, onSave }) {
+  const initialText = `${videoData?.date || 'Date'} Timestamps\n\n${(timestamps || []).join('\n')}\n\nVOD: ${videoData?.url || ''}`;
+  const [editedTimestamps, setEditedTimestamps] = useState(initialText);
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState('');
-
-  useEffect(() => {
-    if (isOpen && timestamps) {
-      // Format the text with header and footer
-      const text = `${videoData?.date || 'Date'} Timestamps\n\n${timestamps.join('\n')}\n\nVOD: ${videoData?.url}`;
-      
-      setEditedTimestamps(text);
-      setError('');
-    }
-  }, [isOpen, timestamps, videoData]);
 
   const handleSave = () => {
     try {
@@ -49,8 +45,6 @@ export default function TimestampModal({ isOpen, onClose, timestamps, videoData,
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-
-  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">

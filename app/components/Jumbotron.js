@@ -1,88 +1,33 @@
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 
-const Jumbotron = () => {
+export default function Jumbotron() {
   return (
-    <div className="relative overflow-hidden bg-zinc-900 rounded-2xl">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute inset-0 bg-gradient-to-br from-violet-600/30 to-indigo-600/30" />
-        <svg className="absolute inset-0 h-full w-full" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
-              <path d="M0 32V0h32" fill="none" stroke="white" strokeOpacity="0.1" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-        </svg>
-      </div>
-
-      <div className="relative px-6 py-16 sm:px-8 sm:py-24 lg:py-32 lg:px-12">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid items-center gap-8 lg:grid-cols-2">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              className="space-y-8"
-            >
-              <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
-                Convert Timestamps to{' '}
-                <span className="bg-gradient-to-r from-violet-400 to-indigo-400 bg-clip-text text-transparent">
-                  Discord Links
-                </span>
-              </h1>
-              <p className="text-lg text-zinc-400 sm:text-xl max-w-2xl">
-                Easily create clickable Discord-formatted links from your Twitch VOD timestamps. Perfect for sharing highlights and memorable moments with your community.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <Link
-                  href="/generator"
-                  className="inline-flex items-center px-6 py-3 text-base font-medium text-white bg-violet-600 rounded-lg hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 focus:ring-offset-zinc-900 transition-all duration-200"
-                >
-                  Get Started
-                  <svg className="ml-2 -mr-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
-                </Link>
-                <a
-                  href="https://www.twitch.tv/Ray__C"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center px-6 py-3 text-base font-medium text-violet-200 bg-zinc-800/50 rounded-lg hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 focus:ring-offset-zinc-900 transition-all duration-200"
-                >
-                  Watch Live
-                  <svg className="ml-2 -mr-1 w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z" />
-                  </svg>
-                </a>
-              </div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="relative lg:block"
-            >
-              <div className="absolute -inset-2">
-                <div className="w-full h-full mx-auto opacity-30 blur-lg filter" style={{
-                  background: 'linear-gradient(90deg, #7c3aed 0%, #4f46e5 100%)'
-                }} />
-              </div>
-              <img
-                src="https://www.vectorlogo.zone/logos/twitch/twitch-icon.svg"
-                className="relative w-full max-w-lg mx-auto transform lg:scale-110"
-                alt="Twitch Logo"
-              />
-            </motion.div>
+    <section className="hero-grid relative border-b border-white/10">
+      <div className="section-shell relative py-20 sm:py-28 lg:py-36">
+        <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .55 }} className="max-w-5xl">
+          <div className="mb-8 inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/[.04] px-4 py-2 text-xs text-slate-300"><span className="live-dot" /> Twitch moments, Discord ready</div>
+          <h1 className="hero-title">Stop sharing the whole stream.</h1>
+          <p className="mt-7 max-w-2xl text-lg leading-8 text-slate-400 sm:text-xl">Turn any Twitch VOD timestamp into a clean, clickable Discord link. Find the moment, name it, send it.</p>
+          <div className="mt-10 flex flex-wrap gap-3">
+            <Link href="/generator" className="button-primary">Create timestamp links <span>↗</span></Link>
+            <a href="#how-it-works" className="button-secondary">See how it works <span>↓</span></a>
           </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+        </motion.div>
 
-export default Jumbotron;
+        <motion.div initial={{ opacity: 0, y: 26 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .65, delay: .15 }} className="mt-16 lg:ml-auto lg:mt-[-3rem] lg:w-[62%]">
+          <div className="product-card rotate-[-1deg]">
+            <div className="flex items-center justify-between border-b border-white/10 px-5 py-4"><div className="flex items-center gap-2 text-xs text-slate-400"><span className="h-2 w-2 rounded-full bg-lime-300" /> LINK BUILDER</div><span className="font-mono text-[10px] text-slate-600">CL/001</span></div>
+            <div className="grid gap-6 p-5 sm:p-7">
+              <div><label className="field-label">Twitch channel</label><div className="mock-input"><span className="text-violet-400">◈</span> ray__c <span className="ml-auto text-lime-300">VODs loaded ✓</span></div></div>
+              <div><label className="field-label">Moments</label><div className="mock-editor"><div><b>14:32</b><span>The impossible comeback</span></div><div><b>1:02:08</b><span>Chat called it way too early</span></div><div><b>2:47:51</b><span>One more for the highlight reel</span></div><i>+</i></div></div>
+              <div className="flex items-center justify-between"><span className="text-xs text-slate-500">3 links · 241 characters</span><span className="rounded-full bg-lime-300 px-4 py-2 text-xs font-bold text-[#0d1012]">Generate links ↗</span></div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}

@@ -7,7 +7,7 @@ let tokenExpiry = null;
 
 const clientId = process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID || process.env.TWITCH_CLIENT_ID;
 // SECURE: This is only available on the server
-const clientSecret = process.env.TWITCH_CLIENT_SECRET || process.env.NEXT_PUBLIC_TWITCH_CLIENT_SECRET;
+const clientSecret = process.env.TWITCH_CLIENT_SECRET;
 
 async function getNewAccessToken() {
     try {

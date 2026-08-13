@@ -1,90 +1,27 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { fetchFromTwitch } from '../actions';
 
-const VideoGallery = () => {
+export default function VideoGallery() {
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  // Get the current hostname dynamically
-  const hostname = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
-
-  useEffect(() => {
-    const fetchVideos = async () => {
-      try {
-        const response = await fetchFromTwitch('videos', {
-          user_id: '44574567',
-          first: 4,
-        });
-        setVideos(response.data);
-      } catch (error) {
-        console.error('Error fetching videos:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchVideos();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-violet-600"></div>
-      </div>
-    );
-  }
+  useEffect(() => { fetchFromTwitch('videos', { user_id: '44574567', first: 3 }).then(r => setVideos(r.data || [])).catch(() => setVideos([])).finally(() => setLoading(false)); }, []);
+  const thumbnail = (video) => video.thumbnail_url?.replace('%{width}', '640').replace('%{height}', '360');
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
-          Recent Videos
-        </h1>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {videos && videos.length > 0 && videos.map((video) => (
-          <div
-            key={video.id}
-            className="bg-zinc-900 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]"
-          >
-            <div className="relative">
-              <iframe
-                src={`https://player.twitch.tv/?video=${video.id}&parent=${hostname}&autoplay=false`}
-                height={219}
-                width="100%"
-                className="w-full"
-              />
-            </div>
-            <div className="p-5 space-y-3">
-              <h5 className="text-lg font-semibold line-clamp-2 text-white">
-                {video.title}
-              </h5>
-              <div className="flex justify-between items-center text-sm text-zinc-400">
-                <p>{new Date(video.created_at).toLocaleDateString()}</p>
-                <div className="flex items-center gap-1">
-                  <svg
-                    className="w-4 h-4"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                    <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
-                  </svg>
-                  <span>{video.view_count.toLocaleString()}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-      {videos.length === 0 && (
-        <div className="text-center py-10 text-zinc-500">
-          No videos found
+    <section className="border-y border-white/10 bg-white/[.018] py-24 sm:py-28">
+      <div className="section-shell">
+        <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end"><div><div className="section-kicker"><span>03</span> Fresh from Twitch</div><h2 className="mt-6 display-title">Recent broadcasts.</h2></div><a href="https://www.twitch.tv/Ray__C/videos" target="_blank" rel="noreferrer" className="text-link">View channel <span>↗</span></a></div>
+        <div className="mt-12 grid gap-5 md:grid-cols-3">
+          {loading && [1,2,3].map(i => <div key={i} className="aspect-[4/3] animate-pulse rounded-2xl bg-white/5" />)}
+          {!loading && videos.map((video, i) => <a key={video.id} href={`https://www.twitch.tv/videos/${video.id}`} target="_blank" rel="noreferrer" className="video-card group">
+            <div className="relative aspect-video overflow-hidden bg-[#171b1e]">{thumbnail(video) && <Image src={thumbnail(video)} alt="" fill sizes="(min-width: 768px) 33vw, 100vw" unoptimized className="object-cover opacity-75 transition duration-500 group-hover:scale-105 group-hover:opacity-100" />}<span className="absolute left-4 top-4 rounded-full bg-[#0d1012]/80 px-3 py-1 font-mono text-[10px] text-white backdrop-blur">VOD {String(i + 1).padStart(2, '0')}</span><span className="absolute bottom-4 right-4 grid h-11 w-11 place-items-center rounded-full bg-lime-300 text-[#0d1012] transition group-hover:rotate-12">↗</span></div>
+            <div className="p-5"><h3 className="line-clamp-2 min-h-[3rem] font-semibold leading-6 text-white">{video.title}</h3><div className="mt-5 flex justify-between border-t border-white/10 pt-4 font-mono text-[10px] uppercase tracking-wider text-slate-500"><span>{new Date(video.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span><span>{Number(video.view_count).toLocaleString()} views</span></div></div>
+          </a>)}
+          {!loading && videos.length === 0 && <p className="col-span-full py-12 text-slate-500">Recent broadcasts are taking a breather. Check back soon.</p>}
         </div>
-      )}
-    </div>
+      </div>
+    </section>
   );
-};
-
-export default VideoGallery;
+}
